@@ -9,7 +9,10 @@
             var game = document.querySelector("#game");
 
             game.toggleDebug();
-            game.startup("login-server.example.com", 6112, "http://media.example.com/");
+            game.startup("login-server.example.com", 6112, 
+			 [["World1 Name", "World1 IP", "World1 Port"], 
+			  ["World2 Name", "World2 IP", "World2 Port"]], 
+			 "http://media.example.com/");
         }
 
         var flash = {};
