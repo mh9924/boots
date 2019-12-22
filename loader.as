@@ -13,7 +13,7 @@ function log(msg:String) {
 	ExternalInterface.call("console.log", "[LOADER]: "+msg);
 }
 
-function containerFound(container, loginServer:String, loginPort) {
+function containerFound(container, loginServer:String, loginPort, worlds:Array) {
 	// This is called every time a new frame is entered after we do setup - we use it to find out if all the client components are loaded
 	
 	with (container) {
@@ -31,17 +31,31 @@ function containerFound(container, loginServer:String, loginPort) {
 		SHELL.analytics = false;
 		
 		if (DEBUG) {
-			log("Analytics disabled.");
+			log("Analytics disable.");
 		}
 		
-		// Tell the airtower to use our login server information
-		AIRTOWER.LOGIN_IP = loginServer;
-		AIRTOWER.LOGIN_PORT_EVEN = loginPort;
-		AIRTOWER.LOGIN_PORT_ODD = loginPort;
+		setServers(container, loginServer, loginPort, new Array;
 	}
 	
 	System.security.allowDomain.call(_level1, "*");
 	_root.onEnterFrame = hookChat;
+}
+
+function setServers(container, loginServer:String, loginPort, worlds:Array) {
+	with (container) {
+		AIRTOWER.LOGIN_IP = loginServer;
+		AIRTOWER.LOGIN_PORT_EVEN = loginPort;
+		AIRTOWER.LOGIN_PORT_ODD = loginPort;
+	}
+	with(PENGUIN){
+		for (var server in GLOBAL_CRUMBS.servers){
+			delete GLOBAL_CRUMBS.servers[server];
+			delete SHELL.world_crumbs[server];
+		}
+		for (var world in worlds)
+			SHELL.world_crumbs.push({name: worlds[world][0], ip: worlds[world][1], 
+				port: worlds[world], id: GLOBAL_CRUMBS.servers.length, 
+					population: 3});
 }
 
 function hookChat() {
@@ -72,7 +86,7 @@ function hookChat() {
 	delete _root.onEnterFrame;
 }
 
-function startup(loginServer:String, loginPort, mediaUrl:String) {
+function startup(loginServer:String, loginPort, worlds:Array, mediaUrl:String) {
 	// This sets up all the mediaserver loading we have to do in the future
 	_global.baseURL = mediaUrl;
 	
@@ -109,7 +123,7 @@ function startup(loginServer:String, loginPort, mediaUrl:String) {
 				// Includes things like the engine, interface, airtower, and crumbs
 				_root.onEnterFrame = function() {
 					if (_level1.shellContainer.DEPENDENCIES_FILENAME) {
-						containerFound(PENGUIN = _level1.shellContainer, loginServer, loginPort);
+						containerFound(PENGUIN = _level1.shellContainer, loginServer, loginPort, worlds);
 					}
 				}
 			}
